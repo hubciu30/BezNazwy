@@ -32,6 +32,18 @@ app.use(express.static(__dirname + "/public"));
 
 //#region functions
 
+// funkcja sprawdza czy uzyszkodnik jest zalogowany czy nie.
+function isLogged(req, res)
+{
+	if (req.session.loggedin)
+	{
+		return true;
+	} 
+	else 
+	{
+		return res.redirect('/logowanie');
+	}
+}
 
 
 //#endregion functions
@@ -50,6 +62,33 @@ app.get('/rejestracja', function(request, response) {
 app.get('/logowanie', function(request, response) {
     response.sendFile(__dirname + "/public/logowanie.html");
 });
+
+// #region pracownik
+
+app.get('/ekranpracownika', function(request, response) {
+	if(isLogged(request, response))
+	{
+		response.sendFile(__dirname + "/public/ekranpracownika.html");
+	}
+});
+
+app.get('/edytujswojedane', function(request, response) {
+	if(isLogged(request, response))
+	{
+		response.sendFile(__dirname + "/public/edytujswojedane.html");
+	}
+});
+
+app.get('/godzinyzdniapracy', function(request, response) {
+	if(isLogged(request, response))
+	{
+		response.sendFile(__dirname + "/public/godzinyzdniapracy.html");
+	}	
+});
+
+
+// #endregion pracownik
+
 
 /*
 app.get('/home', function(request, response) {
