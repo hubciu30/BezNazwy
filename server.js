@@ -47,6 +47,10 @@ app.get('/rejestracja', function(request, response) {
     response.sendFile(__dirname + "/public/rejestracja.html");
 });
 
+app.get('/logowanie', function(request, response) {
+    response.sendFile(__dirname + "/public/logowanie.html");
+});
+
 /*
 app.get('/home', function(request, response) {
 	if (request.session.loggedin) {
