@@ -63,7 +63,7 @@ app.get('/logowanie', function(request, response) {
     response.sendFile(__dirname + "/public/logowanie.html");
 });
 
-// #region pracownik
+//#region pracownik
 
 app.get('/ekranpracownika', function(request, response) {
 	if(isLogged(request, response))
@@ -86,8 +86,60 @@ app.get('/godzinyzdniapracy', function(request, response) {
 	}	
 });
 
+//#endregion pracownik
 
-// #endregion pracownik
+//#region kierownik
+app.get('/ekrankierownika', function(request, response) {
+	if(isLogged(request, response))
+	{
+		response.sendFile(__dirname + "/public/ekrankierownika.html");
+	}	
+});
+
+app.get('/stronaRaportuWidzianaPrzezKierownika', function(request, response) {
+	if(isLogged(request, response))
+	{
+		response.sendFile(__dirname + "/public/stronaRaportuWidzianaPrzezKierownika.html");
+	}	
+});
+
+app.get('/raportKierownika', function(request, response) {
+	if(isLogged(request, response))
+	{
+		response.sendFile(__dirname + "/public/raportKierownika.html");
+	}	
+});
+
+app.get('/edycjagodzin', function(request, response) {
+	if(isLogged(request, response))
+	{
+		response.sendFile(__dirname + "/public/edycjagodzin.html");
+	}	
+});
+//#endregion kierownik
+
+//#region admin
+app.get('/ekranAdmina', function(request, response) {
+	if(isLogged(request, response))
+	{
+		response.sendFile(__dirname + "/public/ekranAdmina.html");
+	}	
+});
+
+app.get('/uprawnienia', function(request, response) {
+	if(isLogged(request, response))
+	{
+		response.sendFile(__dirname + "/public/uprawnienia.html");
+	}	
+});
+
+app.get('/edytujDaneUseraPrzezAdmina', function(request, response) {
+	if(isLogged(request, response))
+	{
+		response.sendFile(__dirname + "/public/edytujDaneUseraPrzezAdmina.html");
+	}	
+});
+//#endregion admin
 
 
 /*
@@ -125,6 +177,17 @@ app.post('/auth', function(request, response) {
 	}
 });
 */
+
+app.post('/validation', function(request, response) {
+	if(request.session.loggedin)
+	{
+		response.send("OK");
+	}else
+	{
+		response.send("ERROR");
+	}
+});
+
 // #endregion posts
 
  //#region listener
