@@ -11,21 +11,39 @@
 </head>
 
 <body>
-<header>
-<p>Edycja godzin</p>
+<header> 
+<h1>BezNazwy team</h1>
+<h2>Raportowanie czasu pracy</h2>
+<h3>Edycja godzin</h3>
+</header>
+
+<article>
+
 <form>
-    <label for="data">Data:</label>
-	<input type="date" id="data" ><br>
-	<label for="liczbagodzin">Liczba godzin:</label>
-	<input type="number" id="liczbagodzin" min="1"><br>
-	<input type="button"  value="Zmień"/><br>
+	<div class="form-group">
+	<label>Data</label>
+	<input type="date" id="data" class="form-control" placeholder="Data">
+	</div>
+
+	<div class="form-group">
+	<label>Liczba godzin</label>
+	<input type="number" id="liczbagodzin" min="1" class="form-control" placeholder="Liczba godzin:">
+	</div>
+	
+	<div class="form-group">
+	<label>Opis</label>
+	<input type="text" id="opis" class="form-control" placeholder="Opis">
+	</div>
+
+	<div class="form-group">
+	<button class="btn btn-secondary"><a href="logowanie.html">Ekran główny</a></button>
+	<button type="submit" class="btn btn-warning">Zmień</button>
+	<button class="btn btn-primary">Przejdz do raportu</button>
+	</div>
+
 </form>
 
-<ul>
-<li class="last"><a href="logowanie.html">Ekran główny</a></li>
-<input type="button" onclick="location.href='stronaRaportuWidzianaPrzezKierownika.html';" value="Przejdz do raportu"/>
-</ul>
-</header>
+</article>
 
 
 <footer>

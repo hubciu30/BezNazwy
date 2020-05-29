@@ -11,11 +11,15 @@
 </head>
 
 <body>
-<header>
-<h1><a href="index.html">BezNazwy</a></h1>
-<p>Uprawnienia</p>
+  <header> 
+    <h1>BezNazwy team</h1>
+    <h2>Raportowanie czasu pracy</h2>
+    <h3>Uprawnienia</h3>
+</header>
+
+<article>
 <label for="users">Lista użytkowników:</label>
-<select name="users" id="users">
+<select class="form-control" name="users" id="users">
   <option value="JanuszTracz">Janusz Tracz</option>
   <option value="AdamMalysz">Adam Małysz</option>
   <option value="RobertMaklowicz">Robert Makłowicz</option>
@@ -24,16 +28,16 @@
 <br>
 <label for="job">Stanowisko:</label>
 
-<select name="job" id="job">
+<select class="form-control" name="job" id="job">
   <option value="kierownik">Kierownik</option>
   <option value="saab">Programista</option>
   <option value="mercedes">Tester</option>
   <option value="audi">Analityk</option>
 </select><br>
-<button onclick="myFunction()">Usuń użytkownika</button>
-<button onclick="myFunction()">Zmień</button>
+<button class="btn btn-primary" onclick="myFunction()">Usuń użytkownika</button>
+<button class="btn btn-secondary" onclick="myFunction()">Zmień</button>
 </ul>
-</header>
+</article>
 
 <footer>
 <ul>

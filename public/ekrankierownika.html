@@ -11,20 +11,28 @@
 </head>
 
 <body>
-<header>
-<p>Ekran Kierownika</p>
-<form>
-  <label for="Projekt">Projekt:</label>
-  <select name="wybierz">
-		<option>Tu wpisz pierwszą możliwość</option>
-		<option>Tu wpisz drugą możliwość</option>		
-	</select><br>
-	<input type="button"  value="Przejdź"/><br>
-</form>
-<ul>
-<li class="last"><a href="logowanie.html">Ekran główny</a></li>
-</ul>
+<header> 
+<h1>BezNazwy team</h1>
+<h2>Raportowanie czasu pracy</h2>
+<h3>Ekran kierownika</h3>
 </header>
+
+
+<article>
+<form>
+<div class="form-group">
+<label>Projekt:</label>
+<select name="wybierz" id="projektSelect" class="form-control">
+<option>Tu wpisz pierwszą możliwość</option>
+<option>Tu wpisz drugą możliwość</option>		
+</select>
+</div>
+
+<div class="form-group">
+<button class="btn btn-secondary"><a href="logowanie.html">Ekran główny</a></button>
+<button type="submit" class="btn btn-primary">Przejdź</button>
+</div>
+</article>
 
 
 
