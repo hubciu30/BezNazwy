@@ -40,7 +40,7 @@ app.use(express.static(__dirname + "/public"));
 //#region gets
 
 app.get("/", function(req, res){
-    res.sendFile(__dirname + "/public/logowanie.html");
+    res.sendFile(__dirname + "/public/index.html");
 });
 
 app.get('/rejestracja', function(request, response) {
