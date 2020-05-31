@@ -155,6 +155,56 @@ app.get('/home', function(request, response) {
 //#endregion gets
 
 //#region posts
+
+// pracownik wysyla raport
+app.post("/pr_sendRaport", function(request, response)
+{
+	let packet = [];	
+	for(let i in request.body)
+	{	
+		packet.push(request.body[i]);	
+	}
+	
+	// dodaje raport
+	connection.query('INSERT INTO `raporty` (`id_raportu`, `id_projektu`, `data`, `opis`) VALUES (NULL, ?, ?, ?) ', [packet[0], packet[2], packet[3]], function(error, results, fields){});
+	// pobieram godziny
+	var czas = 0;
+	connection.query('SELECT * FROM `teams` WHERE id_user LIKE ? AND id_projektu LIKE ? ', [request.session.id_user, packet[0]], function(error, results, fields)
+	{
+		if(results.length > 0)
+		{
+			czas = parseInt(results[0].czas);
+			czas = czas + parseInt(packet[1]);
+			// zmieniam godziny
+			connection.query('UPDATE `teams` SET `czas` = ? WHERE `teams`.`id_user` LIKE ? AND `teams`.`id_projektu` LIKE ?', [ czas, request.session.id_user, packet[0]], function(error, results, fields){});
+			response.send("Success");
+		}
+	});
+	
+	
+	response.end();
+	
+});
+
+// zwraca raporty danego uzytkownika
+app.post("/pr_raport", function(request, response){
+	connection.query('SELECT * FROM `teams` INNER JOIN projekty ON teams.id_projektu = projekty.id_projektu WHERE teams.id_user LIKE ?', [request.session.id_user], function(error, results, fields)
+	{
+		if(results.length > 0)
+		{
+			let data = [];
+			for(let i = 0; i < results.length; i++)
+			{
+				data.push({"id": results[i].id_projektu,"nazwa":results[i].nazwa});
+			}
+			response.send(data);
+		}else
+		{
+			response.send("NONE");
+		}
+	});
+});
+
 // pracownik - zmiana danych
 app.post("/pr_zmien", function(request, response)
 {

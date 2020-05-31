@@ -18,12 +18,11 @@
 </header>
 
 <article>
-<form>
+<form method = "POST">
 <div class="form-group">
 <label for="projektSelect">Projekt:</label>
 <select name="wybierz" id="projektSelect" class="form-control">
-<option>Tu wpisz pierwszą możliwość</option>
-<option>Tu wpisz drugą możliwość</option>		
+		
 </select>
 </div>
 
@@ -43,7 +42,7 @@
 </div>
 <div class="form-group">
 
-<button type="submit" class="btn btn-primary"  onclick = "window.location = 'stronaRaportuWidzianaPrzezKierownika' ">Wyślij</button>
+<button class="btn btn-primary" type = "button" onclick = "PracownikWysylaRaport();">Wyślij</button>
 </div>
 </form>
 <button class="btn btn-secondary"  onclick = "window.location = 'ekranpracownika' ">Ekran główny</button>
@@ -57,7 +56,7 @@
     <strong>Mail:</strong><a href="BezNazwy:mail@mail.pl">mail@mail.pl  </a>
     <p>copyright © 2020 <a href="/">BezNazwy</a></p>
     </footer>
-<script src = "js/main.js" type="text/javascript"></script>
+<script type="text/javascript">ProjektyPracownika();</script>
 </body>
 </html>
 
