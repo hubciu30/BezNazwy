@@ -3,19 +3,19 @@ const express = require("express");
 const bodyParser = require("body-parser")
 const session = require('express-session');
 const path = require('path');
-// const mysql = require('mysql');
+ const mysql = require('mysql');
 
 
 
 const app = express();
-/*
+
 const connection = mysql.createConnection({
 	host     : 'localhost',
 	user     : 'root',
-	password : '',
-	database : 'nodelogin'
+	password : 'mysql',
+	database : 'beznazwy'
 });
-*/
+
 
 //#endregion include&init
 
@@ -155,17 +155,66 @@ app.get('/home', function(request, response) {
 //#endregion gets
 
 //#region posts
-/*
+// pracownik - zmiana danych
+app.post("/pr_zmien", function(request, response)
+{
+	let imie = request.body.imie;
+	let nazwisko = request.body.nazwisko;
+	let haslo = request.body.haslo;
+	let phaslo = request.body.rphaslo;
+
+	if(haslo === phaslo)
+	{
+		if(imie && imie!==request.session.imie)
+		{
+			connection.query('UPDATE `users` SET `imie` = ? WHERE `users`.`id_user` = ?', [imie, request.session.id_user], function(error, results, fields){});
+		}
+		if(nazwisko && nazwisko!==request.session.nazwisko)
+		{
+			connection.query('UPDATE `users` SET `nazwisko` = ? WHERE `users`.`id_user` = ?', [nazwisko, request.session.id_user], function(error, results, fields){});
+		}
+		if(haslo !== request.session.password)
+		{
+			connection.query('UPDATE `users` SET `haslo` = ? WHERE `users`.`id_user` = ?', [haslo, request.session.id_user], function(error, results, fields){});
+		}
+
+		response.redirect('/ekranpracownika');
+		response.end();
+	}
+	else
+	{
+		response.redirect("/edytujswojedane");
+		response.end();
+	}
+
+});
+
+// autoryzacja
 app.post('/auth', function(request, response) {
 	var username = request.body.username;
 	var password = request.body.password;
 	if (username && password) {
-        connection.query('SELECT * FROM accounts WHERE username = ? AND password = ?', [username, password], function(error, results, fields) 
-        {
+        connection.query('SELECT * FROM users WHERE login = ? AND haslo = ?', [username, password], function(error, results, fields) 
+        {		
 			if (results.length > 0) {
-				request.session.loggedin = true;
+				request.session.loggedin = true;		
 				request.session.username = username;
-				response.redirect('/home');
+				request.session.password = password;
+				request.session.id_user = results[0].id_user;
+				request.session.imie = results[0].imie;
+				request.session.nazwisko = results[0].nazwisko;
+				request.session.stanowisko = results[0].stanowisko;
+				if(request.session.stanowisko === "Admin"){
+					response.redirect('/ekranAdmina');
+				}
+				else if(request.session.stanowisko === "Kierownik")
+				{
+					response.redirect('/ekrankierownika');
+				}
+				else
+				{
+					response.redirect('/ekranpracownika');
+				}
 			} else {
 				response.send('Incorrect Username and/or Password!');
 			}			
@@ -176,7 +225,7 @@ app.post('/auth', function(request, response) {
 		response.end();
 	}
 });
-*/
+
 
 app.post('/validation', function(request, response) {
 	if(request.session.loggedin)

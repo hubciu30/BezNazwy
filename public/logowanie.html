@@ -18,18 +18,18 @@
 </header>
 
 <article>
-<form>
+<form action = "auth" method="POST">
 <div class="form-group">
 <label>Login</label>
-<input type="text" class="form-control" placeholder="Login">
+<input id="login" name="username" type="text" class="form-control" placeholder="Login">
 </div>
 
 <div class="form-group">
 <label>Hasło</label>
-<input type="password" class="form-control" placeholder="Hasło">
+<input id = "pass" type="password" name ="password"  class="form-control" placeholder="Hasło">
 </div>
 
-<button class="btn btn-primary">Zaloguj</button>
+<button class="btn btn-primary" type="submit">Zaloguj</button>
 </form>
 </article>
 
