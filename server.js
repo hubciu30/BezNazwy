@@ -176,12 +176,11 @@ app.post("/pr_sendRaport", function(request, response)
 			czas = parseInt(results[0].czas);
 			czas = czas + parseInt(packet[1]);
 			// zmieniam godziny
-			connection.query('UPDATE `teams` SET `czas` = ? WHERE `teams`.`id_user` LIKE ? AND `teams`.`id_projektu` LIKE ?', [ czas, request.session.id_user, packet[0]], function(error, results, fields){});
-			response.send("Success");
+			connection.query('UPDATE `teams` SET `czas` = ? WHERE `teams`.`id_user` LIKE ? AND `teams`.`id_projektu` LIKE ?', [ czas, request.session.id_user, packet[0]], function(error, results, fields){});	
 		}
 	});
 	
-	
+	response.send("Success");
 	response.end();
 	
 });
