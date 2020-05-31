@@ -19,32 +19,32 @@
 </header>
 
 <article>
-<form>
+<form method="POST">
 <div class="form-group">
 <label>Login</label>
-<input type="text" class="form-control" placeholder="Login">
+<input id="login" name="login" type="text" class="form-control" placeholder="Login">
 </div>
 
 <div class="form-group">
 <label>Hasło</label>
-<input type="password" class="form-control" placeholder="Hasło">
+<input id="haslo" name="haslo" type="password" class="form-control" placeholder="Hasło">
 </div>
 
 <div class="form-group">
 <label>Powtórz hasło</label>
-<input type="password" class="form-control" placeholder="Powtórz hasło">
+<input id = "phaslo" type="password" class="form-control" placeholder="Powtórz hasło">
 </div>
 
 <div class="form-group">
 <label>Imię</label>
-<input type="text" class="form-control" placeholder="Imię">
+<input id="imie" name="imie" type="text" class="form-control" placeholder="Imię">
 </div>
 
 <div class="form-group">
 <label>Nazwisko</label>
-<input type="text" class="form-control" placeholder="Nazwisko">
+<input id="nazwisko" name="nazwisko" type="text" class="form-control" placeholder="Nazwisko">
 </div>
-<button onclick = "window.location = 'logowanie' " type="submit" class="btn btn-primary">Zarejestruj</button>
+<button onclick = "Rejestracja();" type="button" class="btn btn-primary">Zarejestruj</button>
 </form>
 </article>
 

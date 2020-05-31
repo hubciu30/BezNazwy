@@ -20,22 +20,17 @@
 <article>
 <label for="users">Lista użytkowników:</label>
 <select class="form-control" name="users" id="users">
-  <option value="JanuszTracz">Janusz Tracz</option>
-  <option value="AdamMalysz">Adam Małysz</option>
-  <option value="RobertMaklowicz">Robert Makłowicz</option>
-  <option value="PiotrSiara">Piotr Siara</option>
 </select>
 <br>
 <label for="job">Stanowisko:</label>
 
 <select class="form-control" name="job" id="job">
-  <option value="kierownik">Kierownik</option>
-  <option value="saab">Programista</option>
-  <option value="mercedes">Tester</option>
-  <option value="audi">Analityk</option>
+  <option value="Kierownik">Kierownik</option>
+  <option value="Programista">Programista</option>
+  <option value="Tester">Tester</option>
+  <option value="Analityk">Analityk</option>
 </select><br>
-<button class="btn btn-primary" onclick = "window.location = 'ekranAdmina' ">Usuń użytkownika</button>
-<button class="btn btn-secondary" >Zmień</button>
+<button class="btn btn-secondary" onclick="ZmienUprawnienia();" >Zmień</button>
 <button class="btn btn-warning" onclick = "window.location = 'ekranAdmina' ">Ekran główny</button>
 </ul>
 </article>
@@ -46,6 +41,6 @@
   <strong>Mail:</strong><a href="BezNazwy:mail@mail.pl">mail@mail.pl  </a>
   <p>copyright © 2020 <a href="/">BezNazwy</a></p>
   </footer>
-<script src = "js/main.js" type="text/javascript"></script>
+<script type="text/javascript">GetAllUsers();</script>
 </body>
 </html>

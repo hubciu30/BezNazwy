@@ -10,6 +10,48 @@
 <script src = "js/main.js" type="text/javascript"></script>
 </head>
 
+<script>
+	function p_Check()
+	{
+		let haslo = $("#haslo").val();
+		let phaslo = $("#phaslo").val();
+    let login = $("#login").val();
+    
+    $.post("checklogin", function(data){
+      if(data === "Correct")
+      {
+        $("#login").css("border-color","green");
+        $("#zmien").prop('disabled', false);
+      }else
+      {
+        $("#login").css("border-color","red");
+        $("#zmien").prop('disabled', true);
+      }
+    });
+
+		if(haslo && phaslo)
+		{
+			if(haslo === phaslo)
+			{
+        $("#zmien").prop('disabled', false);
+        $("#haslo").css("border-color","green");
+        $("#phaslo").css("border-color","green");
+			}else
+			{
+        $("#zmien").prop('disabled', true);
+        $("#haslo").css("border-color","red");
+       $("#phaslo").css("border-color","red");
+			}
+		}else
+		{
+      $("#zmien").prop('disabled', true);
+      $("#haslo").css("border-color","red");
+      $("#phaslo").css("border-color","red");
+		}
+		
+	}
+</script>
+
 <body>
 <header> 
 <h1>BezNazwy team</h1>
@@ -22,41 +64,37 @@
 
 <div class="form-group">
 <label>Pracownik:</label>
-<select name="wybierz" class="form-control">
-  <option value="JanuszTracz">Janusz Tracz</option>
-  <option value="AdamMalysz">Adam Małysz</option>
-  <option value="RobertMaklowicz">Robert Makłowicz</option>
-  <option value="PiotrSiara">Piotr Siara</option>
+<select name="wybierz" class="form-control" id = "users">
 </select>
 </div>
 <div class="form-group">
 <label>Login</label>
-<input type="text" class="form-control" placeholder="Login">
+<input id = "login" type="text" class="form-control" placeholder="Login">
 </div>
 <div class="form-group">
 <label>Hasło</label>
-<input type="password" class="form-control" placeholder="Hasło">
+<input id = "haslo" type="password" class="form-control" placeholder="Hasło">
 </div>
 
 <div class="form-group">
 <label>Powtórz hasło</label>
-<input type="password" class="form-control" placeholder="Powtórz hasło">
+<input id = "phaslo" type="password" class="form-control" placeholder="Powtórz hasło">
 </div>
  
 <div class="form-group">
 <label>Imię</label>
-<input type="text" class="form-control" placeholder="Imię">
+<input id="imie" type="text" class="form-control" placeholder="Imię">
 </div>
 
 <div class="form-group">
 <label>Nazwisko</label>
-<input type="text" class="form-control" placeholder="Nazwisko">
+<input id = "nazwisko" type="text" class="form-control" placeholder="Nazwisko">
 </div>
 
 <div class="form-group">
-<button class="btn btn-secondary" type="submit" onclick = "window.location = 'ekrankierownika' " >Ekran główny</button>
-<button class="btn btn-danger" type="submit">Usuń użytkownika</button>
-<button class="btn btn-primary" type="submit">Zmień</button>
+<button class="btn btn-secondary" type="submit" onclick = "window.location = 'ekranAdmina' " >Ekran główny</button>
+<button class="btn btn-danger" type="button" onclick="AdminDelete();">Usuń użytkownika</button>
+<button id = "zmien"" class="btn btn-primary" type="button" onclick="AdminChangeData();">Zmień</button>
 </div>
 </article>
 
@@ -68,6 +106,22 @@
   <strong>Mail:</strong><a href="BezNazwy:mail@mail.pl">mail@mail.pl  </a>
   <p>copyright © 2020 <a href="/">BezNazwy</a></p>
   </footer>
-<script src = "js/main.js" type="text/javascript"></script>
+<script type="text/javascript">GetAllUsers()</script>
 </body>
+<script>
+    $("#zmien").prop('disabled', true);
+    $('#imie').on('input', function() {
+      p_Check();
+    });
+    $('#nazwisko').on('input', function() {
+      p_Check();
+    });
+    $('#haslo').on('input', function() {
+      p_Check();
+    });
+    $('#phaslo').on('input', function() {
+      p_Check();
+    });
+</script>
+
 </html>
