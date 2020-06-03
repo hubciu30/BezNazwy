@@ -32,17 +32,20 @@
 			}else
 			{
 				$("#zmien").prop('disabled', true);
+				let haslo = $("#haslo").css("border-color","red");
+				let phaslo = $("#rphaslo").css("border-color","red");
 			}
 		}else
 		{
 			$("#zmien").prop('disabled', true);
-		}
-		
+			let haslo = $("#haslo").css("border-color","red");
+			let phaslo = $("#rphaslo").css("border-color","red");
+		}	
 	}
 </script>
 
 <article>
-<form action="pr_zmien" method="POST">
+<form method="POST">
 
 <div class="form-group">
 <label>Imię</label>
@@ -61,11 +64,11 @@
 <label>Powtórz hasło</label>
 <input id = "rphaslo" name = "rphaslo" type="password" class="form-control" placeholder="Powtórz hasło">
 </div>
-<button id = "zmien" class="btn btn-primary" type="submit">Zmień</button>
+<button id = "zmien" class="btn btn-primary" type="button" onclick="Zmiana();">Zmień</button>
 </form>
 </br>
 <div class="form-group">
-<button class="btn btn-secondary" onclick = "window.location = 'ekranpracownika' " >Ekran główny</button>
+<button class="btn btn-warning" onclick = "window.location = 'ekranpracownika' " >Ekran główny</button>
 </div>
 
 
@@ -81,6 +84,36 @@
 <script src = "js/main.js" type="text/javascript"></script>
 </body>
 	<script>
+		function Zmiana()
+		{
+			let packet = {
+				imie : $("#imie").val(),
+				nazwisko : $("#nazwisko").val(),
+				haslo : $("#haslo").val(),
+				phaslo : $("#rphaslo").val()
+			};
+
+			$.post("pr_zmien", packet, function(data){
+				console.log(data);
+				if(data === "Success")
+				{
+					alert("Dane zostały zaktualizowane!");
+					location.reload();
+				}else
+				{
+					alert("Wystąpił problem!");
+				}
+			});
+
+		}
+	</script>
+	<script>
+
+		$.post("PracownikDane", function(data){
+			$('#imie').val(data.imie);
+			$('#nazwisko').val(data.nazwisko);
+		});
+
 		$("#zmien").prop('disabled', true);
 		$('#imie').on('input', function() {
 			p_Check();

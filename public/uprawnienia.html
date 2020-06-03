@@ -22,13 +22,12 @@
 <select class="form-control" name="users" id="users">
 </select>
 <br>
-<label for="job">Stanowisko:</label>
+<label for="job">Uprawnienia:</label>
 
 <select class="form-control" name="job" id="job">
+  <option value="Pracownik">Pracownik</option>
   <option value="Kierownik">Kierownik</option>
-  <option value="Programista">Programista</option>
-  <option value="Tester">Tester</option>
-  <option value="Analityk">Analityk</option>
+  <option value="Admin">Admin</option>
 </select><br>
 <button class="btn btn-secondary" onclick="ZmienUprawnienia();" >Zmień</button>
 <button class="btn btn-warning" onclick = "window.location = 'ekranAdmina' ">Ekran główny</button>

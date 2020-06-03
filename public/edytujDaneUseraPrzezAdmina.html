@@ -63,7 +63,7 @@
 <article>
 
 <div class="form-group">
-<label>Pracownik:</label>
+<label>Użytkownik:</label>
 <select name="wybierz" class="form-control" id = "users">
 </select>
 </div>
@@ -90,10 +90,9 @@
 <label>Nazwisko</label>
 <input id = "nazwisko" type="text" class="form-control" placeholder="Nazwisko">
 </div>
-
 <div class="form-group">
-<button class="btn btn-secondary" type="submit" onclick = "window.location = 'ekranAdmina' " >Ekran główny</button>
-<button class="btn btn-danger" type="button" onclick="AdminDelete();">Usuń użytkownika</button>
+<button class="btn btn-warning" type="submit" onclick = "window.location = 'ekranAdmina' " >Ekran główny</button>
+<button class="btn btn-danger" type="button" onclick="AdminDelete();">Dezaktywuj uzytkownika</button>
 <button id = "zmien"" class="btn btn-primary" type="button" onclick="AdminChangeData();">Zmień</button>
 </div>
 </article>
@@ -108,7 +107,26 @@
   </footer>
 <script type="text/javascript">GetAllUsers()</script>
 </body>
+
 <script>
+  function WriteData(){
+    let id = $("#users").val();
+    $.post("GetDataForUserByID", {id: id }, function(data)
+    {
+      $('#login').val(data.login);
+      $('#imie').val(data.imie);
+      $('#nazwisko').val(data.nazwisko);
+      $('#haslo').val(data.haslo);
+      $('#phaslo').val(data.haslo);
+    });
+  }
+  WriteData();
+</script>
+
+<script>
+    $("#users").on('click', function() {
+      WriteData();
+    });
     $("#zmien").prop('disabled', true);
     $('#imie').on('input', function() {
       p_Check();
@@ -123,5 +141,4 @@
       p_Check();
     });
 </script>
-
 </html>

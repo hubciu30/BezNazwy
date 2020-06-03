@@ -15,19 +15,18 @@
 <header> 
 <h1>BezNazwy team</h1>
 <h2>Raportowanie czasu pracy</h2>
-<h3>Rejestracja</h3>
+<h3>Nowy projekt</h3>
 </header>
 
 <article>
-<form method="POST">
 <div class="form-group">
-<label>Nazwa</label>
-<input id="login" name="login" type="text" class="form-control" placeholder="Nazwa">
+
+<input id="nazwa" name="nazwa" type="text" class="form-control" placeholder="Nazwa">
 </div>
 
-
-
-<button onclick = "Rejestracja();" type="button" class="btn btn-primary">Dodaj</button>
+<div class="form-group">
+<button class="btn btn-warning" onclick = "window.location = 'ekranAdmina' ">Ekran główny</button>
+<button onclick = "DodajProjekt();" type="button" class="btn btn-primary">Dodaj projekt</button>
 </form>
 </article>
 
@@ -40,4 +39,23 @@
     </footer>
 <script src = "js/main.js" type="text/javascript"></script>
 </body>
+
+<script>
+    function DodajProjekt()
+    {
+        let packet = {nazwa: $("#nazwa").val()};
+        $.post("DodajProjekt", packet, function(data){
+            if(data === "Success"){
+                alert("Dodano projekt!");
+                location.reload();
+            }
+            else
+            {
+                alert("Błąd! Taki projekt już istnieje!");
+            }
+        });
+    }
+    
+</script>
+
 </html>

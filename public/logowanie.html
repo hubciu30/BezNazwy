@@ -18,7 +18,7 @@
 </header>
 
 <article>
-<form action = "auth" method="POST">
+<form method="POST">
 <div class="form-group">
 <label>Login</label>
 <input id="login" name="username" type="text" class="form-control" placeholder="Login">
@@ -29,7 +29,7 @@
 <input id = "pass" type="password" name ="password"  class="form-control" placeholder="Hasło">
 </div>
 
-<button class="btn btn-primary" type="submit">Zaloguj</button>
+<button class="btn btn-primary" type="button" onclick = "Zaloguj();">Zaloguj</button>
 </form>
 </article>
 
@@ -41,4 +41,44 @@
     </footer>
 <script src = "js/main.js" type="text/javascript"></script>
 </body>
+
+<script>
+    function Zaloguj()
+    {
+        let packet = 
+        {
+            login : $("#login").val(),
+            haslo : $("#pass").val()
+        }
+        $.post("auth", packet, function (data)
+        {
+            switch (data)
+            {
+                case "admin":
+                    window.location = "ekranAdmina";
+                    break;
+                case "kierownik":
+                    window.location = "ekrankierownika";
+                    break;
+                case "pracownik":
+                    window.location = "ekranpracownika";
+                    break;
+                case "bad":
+                    alert("Zły login lub hasło");
+                    $("#login").css("border-color", "red");
+                    $("#pass").css("border-color", "red");
+                    break;
+                case "nieaktywny":
+                    alert("Twoje konto zostało dezaktywowane");
+                    break;
+                case "none":
+                    alert("Login i Hasło nie może być puste!");
+                    $("#login").css("border-color", "red");
+                    $("#pass").css("border-color", "red");
+                    break;
+            }
+        });
+    }
+</script>
+
 </html>

@@ -142,7 +142,12 @@ function AdminChangeData()
         haslo : $("#haslo").val(),
         phaslo : $("#phaslo").val()
     }
-    $.post('admin_zmien', packet, function(data) {});
+    $.post('admin_zmien', packet, function(data) {
+        if(data === "Success")
+        {
+            alert("Zaktualizowano dane!");
+        }else{alert("Error");}
+    });
 }
 
 function AdminDelete() 

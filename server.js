@@ -89,6 +89,8 @@ app.get('/godzinyzdniapracy', function(request, response) {
 //#endregion pracownik
 
 //#region kierownik
+
+
 app.get('/ekrankierownika', function(request, response) {
 	if(isLogged(request, response))
 	{
@@ -119,6 +121,25 @@ app.get('/edycjagodzin', function(request, response) {
 //#endregion kierownik
 
 //#region admin
+
+//// Przejscie do ekranu dodaj projekt
+app.get('/nowyProjekt', function(request, response) {
+	if(isLogged(request, response))
+	{
+		response.sendFile(__dirname + "/public/nowyProjekt.html");
+	}	
+});
+////
+
+//// Przejscie do ekranu dodaj uzytkownika
+app.get('/dodajUzytkownika', function(request, response) {
+	if(isLogged(request, response))
+	{
+		response.sendFile(__dirname + "/public/dodajUzytkownika.html");
+	}	
+});
+
+
 app.get('/ekranAdmina', function(request, response) {
 	if(isLogged(request, response))
 	{
@@ -145,20 +166,59 @@ app.get('/edytujDaneUseraPrzezAdmina', function(request, response) {
 
 //#region posts
 
+// zmiana danych usera przez admina - pobranie danych uzytkownika
+app.post("/GetDataForUserByID", function(request, response)
+{
+	let id = request.body.id;
+	connection.query("SELECT * FROM `users` WHERE id_user LIKE ?", [id], function(error, results, fields){
+		if(results.length === 1)
+		{
+			let packet = 
+			{
+				imie : results[0].imie,
+				nazwisko : results[0].nazwisko,
+				login : results[0].login,
+				haslo : results[0].haslo
+			}
+			response.send(packet);
+		}
+	});
+});
+
+app.post("/DodajProjekt", function(request, response)
+{
+	let name = request.body.nazwa;
+	connection.query("SELECT * FROM `projekty` WHERE nazwa LIKE ?", [name], function(error, results, fields){
+		if(results.length === 0)
+		{
+			 
+			connection.query("INSERT INTO `projekty` (`id_projektu`, `nazwa`, `stan`) VALUES (NULL, ?, '1')", [name], function(error, results, fields)
+			{
+				if(error !== null)
+				{
+					response.send("Error");
+				}
+			});
+			response.send("Success");
+		}else
+		{
+			response.send("Error");
+		}
+	});
+});
+
+// admin rejestruj
+app.post('/rejestruj', function(request, response)
+{
+	connection.query('INSERT INTO `users` (`id_user`, `imie`, `nazwisko`, `login`, `haslo`, `stanowisko`) VALUES (NULL, ?, ?, ?, ?, ?) ', [request.body.imie, request.body.nazwisko, request.body.login, request.body.haslo, "oczekujący"], function(error, results, fields){});
+	response.send("Success");
+});
+
+// admin dezaktywuje konto
 app.post("/admin_usun", function(request, response)
 {
 	let id = request.body.id;
-	connection.query('SELECT * FROM `teams` WHERE `id_user` = ?',[id], function(error, results, fields)
-	{
-		if(results.length > 0)
-		{
-			for(let i = 0; i < results.length; i++)
-			{
-				connection.query('DELETE FROM `teams` WHERE `id_user` = ?',[id], function(error, results, fields){console.log(error)});
-			}
-		}
-	});
-	connection.query('DELETE FROM `users` WHERE `id_user` = ?',[id], function(error, results, fields){});
+	connection.query('UPDATE `users` SET `stan` = "0" WHERE `users`.`id_user` = ?',[id], function(error, results, fields){});
 	response.redirect('/edytujDaneUseraPrzezAdmina');
 });
 // admin - zmiana danych
@@ -188,7 +248,7 @@ app.post("/admin_zmien", function(request, response)
 		{
 			connection.query('UPDATE `users` SET `nazwisko` = ? WHERE `users`.`id_user` = ?', [login, id], function(error, results, fields){});
 		}
-		response.redirect('/ekranAdmina');
+		response.send("Success");
 		response.end();
 	}
 	else
@@ -236,6 +296,7 @@ app.post("/admin_getUsers", function(request, response)
 	});
 });
 
+
 // pracownik wysyla raport
 app.post("/pr_sendRaport", function(request, response)
 {
@@ -264,7 +325,7 @@ app.post("/pr_sendRaport", function(request, response)
 
 // zwraca raporty danego uzytkownika
 app.post("/pr_raport", function(request, response){
-	connection.query('SELECT * FROM `teams` INNER JOIN projekty ON teams.id_projektu = projekty.id_projektu WHERE teams.id_user LIKE ?', [request.session.id_user], function(error, results, fields)
+	connection.query('SELECT * FROM `teams` INNER JOIN projekty ON teams.id_projektu = projekty.id_projektu WHERE teams.id_user LIKE ? AND projekty.stan LIKE 1', [request.session.id_user], function(error, results, fields)
 	{
 		if(results.length > 0)
 		{
@@ -284,41 +345,70 @@ app.post("/pr_raport", function(request, response){
 // pracownik - zmiana danych
 app.post("/pr_zmien", function(request, response)
 {
+	console.log(request.body);
 	let imie = request.body.imie;
 	let nazwisko = request.body.nazwisko;
 	let haslo = request.body.haslo;
-	let phaslo = request.body.rphaslo;
-
+	let phaslo = request.body.phaslo;
 	if(haslo === phaslo)
 	{
 		if(imie && imie!==request.session.imie)
 		{
-			connection.query('UPDATE `users` SET `imie` = ? WHERE `users`.`id_user` = ?', [imie, request.session.id_user], function(error, results, fields){});
+			connection.query('UPDATE `users` SET `imie` = ? WHERE `users`.`id_user` = ?', [imie, request.session.id_user], function(error, results, fields){
+				if(error!==null)
+				{
+					response.send('Error');
+				}
+			});
 		}
 		if(nazwisko && nazwisko!==request.session.nazwisko)
 		{
-			connection.query('UPDATE `users` SET `nazwisko` = ? WHERE `users`.`id_user` = ?', [nazwisko, request.session.id_user], function(error, results, fields){});
+			connection.query('UPDATE `users` SET `nazwisko` = ? WHERE `users`.`id_user` = ?', [nazwisko, request.session.id_user], function(error, results, fields){
+				if(error!==null)
+				{
+					response.send('Error');
+				}
+			});
 		}
 		if(haslo !== request.session.password)
 		{
-			connection.query('UPDATE `users` SET `haslo` = ? WHERE `users`.`id_user` = ?', [haslo, request.session.id_user], function(error, results, fields){});
+			connection.query('UPDATE `users` SET `haslo` = ? WHERE `users`.`id_user` = ?', [haslo, request.session.id_user], function(error, results, fields){
+				if(error!==null)
+				{
+					response.send('Error');
+				}
+			});
 		}
 
-		response.redirect('/ekranpracownika');
+		response.send('Success');
 		response.end();
 	}
 	else
 	{
-		response.redirect("/edytujswojedane");
+		response.send("BadPassword");
 		response.end();
 	}
 
 });
 
+// pobiera imie, nazwisko zalogowanej osoby
+app.post('/PracownikDane', function(request, response){
+	connection.query('SELECT * FROM users WHERE id_user = ?', [request.session.id_user], function(error, results, fields)
+	{
+		if(results.length === 1){
+			let packet = {imie: results[0].imie, nazwisko: results[0].nazwisko };
+			response.send(packet);
+		}else{
+			response.send("Error");
+		}
+	});
+});
+
+
 // autoryzacja
 app.post('/auth', function(request, response) {
-	var username = request.body.username;
-	var password = request.body.password;
+	var username = request.body.login;
+	var password = request.body.haslo;
 	if (username && password) {
         connection.query('SELECT * FROM users WHERE login = ? AND haslo = ?', [username, password], function(error, results, fields) 
         {		
@@ -330,24 +420,37 @@ app.post('/auth', function(request, response) {
 				request.session.imie = results[0].imie;
 				request.session.nazwisko = results[0].nazwisko;
 				request.session.stanowisko = results[0].stanowisko;
-				if(request.session.stanowisko === "Admin"){
-					response.redirect('/ekranAdmina');
-				}
-				else if(request.session.stanowisko === "Kierownik")
+				request.session.stan = results[0].stan;
+
+				if(request.session.stan === "1")
 				{
-					response.redirect('/ekrankierownika');
+					if(request.session.stanowisko === "Admin"){
+						//response.redirect('/ekranAdmina');
+						response.send("admin");
+					}
+					else if(request.session.stanowisko === "Kierownik")
+					{
+						//response.redirect('/ekrankierownika');
+						response.send("kierownik");
+					}
+					else
+					{
+						//response.redirect('/ekranpracownika');
+						response.send("pracownik");
+					}
 				}
 				else
 				{
-					response.redirect('/ekranpracownika');
+					response.send("nieaktywny")
 				}
+				
 			} else {
-				response.send('Incorrect Username and/or Password!');
+				response.send('bad');
 			}			
 			response.end();
 		});
 	} else {
-		response.send('Please enter Username and Password!');
+		response.send('none');
 		response.end();
 	}
 });
@@ -364,11 +467,6 @@ app.post('/checklogin', function(request, response)
 	});
 });
 
-app.post('/rejestruj', function(request, response)
-{
-	connection.query('INSERT INTO `users` (`id_user`, `imie`, `nazwisko`, `login`, `haslo`, `stanowisko`) VALUES (NULL, ?, ?, ?, ?, ?) ', [request.body.imie, request.body.nazwisko, request.body.login, request.body.haslo, "oczekujący"], function(error, results, fields){});
-	response.send("Success");
-});
 
 
 app.post('/validation', function(request, response) {
