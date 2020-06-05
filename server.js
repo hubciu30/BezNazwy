@@ -12,7 +12,7 @@ const app = express();
 const connection = mysql.createConnection({
 	host     : 'localhost',
 	user     : 'root',
-	password : 'mysql',
+	password : '',
 	database : 'beznazwy'
 });
 
@@ -83,6 +83,13 @@ app.get('/godzinyzdniapracy', function(request, response) {
 	if(isLogged(request, response))
 	{
 		response.sendFile(__dirname + "/public/godzinyzdniapracy.html");
+	}	
+});
+
+app.get('/raportPracownika', function(request, response) {
+	if(isLogged(request, response))
+	{
+		response.sendFile(__dirname + "/public/raportPracownika.html");
 	}	
 });
 
@@ -165,7 +172,67 @@ app.get('/edytujDaneUseraPrzezAdmina', function(request, response) {
 //#endregion gets
 
 //#region posts
+//kierownik
 
+app.post('/kr_showWorker', function(request, response){
+	connection.query('SELECT * FROM `raporty` WHERE id_user LIKE ?  AND id_projektu LIKE ?', [request.session.TEMP_pracownikID, request.session.TEMP_projektID], function(error, results, fields){
+		let packet = [];
+		if(results.length > 0){
+			for(let i = 0; i < results.length; i++)
+			{
+				let temp = 
+				{
+					id: results[i].id_user,
+					data : results[i].data,
+					opis : results[i].opis,
+					czas: results[i].czas,
+					nazwa: request.session.TEMP_projektNAME
+				};
+				packet.push(temp);
+			}
+			response.send(packet);
+		}else
+		{
+			response.send({nazwa: request.session.TEMP_projektNAME});
+		}
+	});
+});
+
+
+// zachowuje pracownika ktory nas interesuje
+app.post('/kr_saveworker', function(request, response)
+{
+	request.session.TEMP_pracownikID = request.body.id;
+	response.send("OK");
+});
+
+// wyswietla ogolne dane na temat projektu
+app.post("/kr_thisprojekt", function(request, response){ 
+	connection.query('SELECT `users`.id_user, imie, nazwisko, czas FROM `users` INNER JOIN `teams` on `users`.`id_user` = `teams`.`id_user` WHERE `teams`.`id_projektu` LIKE ?', [request.session.TEMP_projektID], function(error, results, fields){
+		let packet = [];
+		for(let i = 0; i < results.length; i++)
+		{
+			let temp = 
+			{
+				id: results[i].id_user,
+				imie : results[i].imie,
+				nazwisko : results[i].nazwisko,
+				czas: results[i].czas,
+				nazwa: request.session.TEMP_projektNAME
+			};
+			packet.push(temp);
+		}
+		response.send(packet);
+	});
+});
+// zachowuje wybrany projekt przez kierownika
+app.post("/kr_getprojekt", function(request, response){
+	request.session.TEMP_projektID = request.body.id;
+	request.session.TEMP_projektNAME = request.body.nazwa;
+	response.send("OK");
+});
+
+//admin
 // zmiana danych usera przez admina - pobranie danych uzytkownika
 app.post("/GetDataForUserByID", function(request, response)
 {
@@ -185,6 +252,7 @@ app.post("/GetDataForUserByID", function(request, response)
 	});
 });
 
+// admin dodaje projekt do realizacji
 app.post("/DodajProjekt", function(request, response)
 {
 	let name = request.body.nazwa;
@@ -221,6 +289,39 @@ app.post("/admin_usun", function(request, response)
 	connection.query('UPDATE `users` SET `stan` = "0" WHERE `users`.`id_user` = ?',[id], function(error, results, fields){});
 	response.redirect('/edytujDaneUseraPrzezAdmina');
 });
+
+// admin bierze wszystkie aktywne projekty
+app.post("/admin_aktywneProjekty", function(request, response){
+	
+	connection.query('SELECT * FROM `projekty` WHERE stan LIKE 1', function(error, results, fields){
+		let packet = [];
+		for(let i = 0; i < results.length; i++)
+		{
+			let temp = 
+			{
+				id: results[i].id_projektu,
+				nazwa: results[i].nazwa
+			};
+			packet.push(temp);
+		}
+		response.send(packet);
+	});
+	
+});
+
+// admin dezaktywuje projekt
+app.post("/admin_dezaktywujPojekt", function(request, response)
+{
+	let id = request.body.id;
+	connection.query('UPDATE `projekty` SET `stan` = "0" WHERE `projekty`.`id_projektu` = ?',[id], function(error, results, fields){
+		if(error !== null)
+		{
+			response.send("Error")
+		}
+	});
+	response.send("OK");
+});
+
 // admin - zmiana danych
 app.post("/admin_zmien", function(request, response)
 {
@@ -296,6 +397,24 @@ app.post("/admin_getUsers", function(request, response)
 	});
 });
 
+// pracownik pobiera raporty per projekt
+app.post('/pr_getraportperprojekt', function(request, response){
+	connection.query('SELECT * FROM `raporty` WHERE id_user LIKE ? AND id_projektu LIKE ? ', [request.session.id_user, request.body.projektID], function(error, results, fields)
+	{
+		let packet = [];
+		for(let i = 0; i < results.length; i++)
+		{
+			let temp = 
+			{
+				data : results[i].data,
+				czas : results[i].czas,
+				opis : results[i].opis
+			}
+			packet.push(temp);
+		}
+		response.send(packet);
+	});
+});
 
 // pracownik wysyla raport
 app.post("/pr_sendRaport", function(request, response)
@@ -307,7 +426,7 @@ app.post("/pr_sendRaport", function(request, response)
 	}
 	
 	// dodaje raport
-	connection.query('INSERT INTO `raporty` (`id_raportu`, `id_projektu`, `data`, `opis`) VALUES (NULL, ?, ?, ?) ', [packet[0], packet[2], packet[3]], function(error, results, fields){});
+	connection.query('INSERT INTO `raporty` (`id_raportu`, `id_projektu`, `data`, `opis`, `czas`, `id_user`) VALUES (NULL, ?, ?, ?, ?, ?) ', [packet[0], packet[2], packet[3], packet[1], request.session.id_user], function(error, results, fields){});
 	// pobieram godziny
 	var czas = 0;
 	connection.query('SELECT * FROM `teams` WHERE id_user LIKE ? AND id_projektu LIKE ? ', [request.session.id_user, packet[0]], function(error, results, fields)
@@ -468,6 +587,10 @@ app.post('/checklogin', function(request, response)
 });
 
 
+app.post('/logout', function(request, response){
+	request.session.destroy();
+	response.send("OK");
+});
 
 app.post('/validation', function(request, response) {
 	if(request.session.loggedin)

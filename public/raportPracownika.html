@@ -3,7 +3,7 @@
 <html lang="pl">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>Panel sterowania</title>
+<title>Raporty pracownika</title>
 <link rel="stylesheet" href="css/bootstrap.css" type="text/css">
 <link rel="stylesheet" href="css/styl.css" type="text/css" />
 <script src = "js/jquery-3.4.1.min.js" type="text/javascript"></script>
@@ -11,6 +11,7 @@
 </head>
 
 <body>
+
 <header> 
 <div id="userLog">
     <h4>Tu bedzie nazwa usera</h4>
@@ -18,23 +19,24 @@
 </div>
 <h1>BezNazwy team</h1>
 <h2>Raportowanie czasu pracy</h2>
-<h3>Panel sterowanie</h3>
+<h3>Raporty pracownika</h3>
 </header>
 
 <article>
 <div class="form-group">
-<button class="btn btn-info switch1" onclick = "window.location = 'uprawnienia' ">Uprawnienia użytkowników</button>
+<label>Wybierz projekt:</label>
+<select name="wybierz" class="form-control" id = "projektSelect"></select>
 </div>
+
+<h1></h1>
 <div class="form-group">
-<button class="btn btn-dark switch1" onclick = "window.location = 'edytujDaneUseraPrzezAdmina' ">Zmiana danych użytkownika</button>
+<button class="btn btn-warning" onclick = "window.location = 'ekranPracownika' ">Ekran główny</button>
+<button class="btn btn-primary" onclick="ShowProjectThisUser();">Wyświetl</button>
 </div>
-<div class="form-group">
-<button class="btn btn-warning switch1" onclick = "window.location = 'nowyProjekt' ">Zarządzaj projektami</button>
-</div>
-<div class="form-group">
-<button class="btn btn-success switch1" onclick = "window.location = 'dodajUzytkownika' ">Dodaj uzytkownika</button>
-</div>
+
+<div id = "userRaporty"></div>
 </article>
+
 
 <footer>
     <strong>Kontakt:</strong> BezNazwy  
@@ -42,7 +44,8 @@
     <strong>Mail:</strong><a href="BezNazwy:mail@mail.pl">mail@mail.pl  </a>
     <p>copyright © 2020 <a href="/">BezNazwy</a></p>
     </footer>
-
-<script src = "js/main.js" type="text/javascript"></script>
+<script type="text/javascript">ProjektyPracownika();</script>
 </body>
+
+
 </html>

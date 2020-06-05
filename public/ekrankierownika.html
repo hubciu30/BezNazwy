@@ -12,6 +12,10 @@
 
 <body>
 <header> 
+<div id="userLog">
+    <h4>Tu bedzie nazwa usera</h4>
+    <button class="btn btn-danger" id="btnLogOut">Wyloguj</button>
+</div>
 <h1>BezNazwy team</h1>
 <h2>Raportowanie czasu pracy</h2>
 <h3>Ekran kierownika</h3>
@@ -22,15 +26,13 @@
 <form>
 <div class="form-group">
 <label>Projekt:</label>
-<select name="wybierz" id="projektSelect" class="form-control">
-<option>Tu wpisz pierwszą możliwość</option>
-<option>Tu wpisz drugą możliwość</option>		
+<select name="wybierz" id="projekty" class="form-control">
+		
 </select>
 </div>
-
+</form>
 <div class="form-group">
-<button class="btn btn-warning" onclick = "window.location = 'edytujDaneUseraPrzezAdmina' ">Ekran główny</button>
-<button type="submit" class="btn btn-primary" onclick = "window.location = 'raportKierownika' ">Przejdź</button>
+<button class="btn btn-primary" onclick = "NEXT();">Przejdz</button>
 </div>
 </article>
 
@@ -42,6 +44,19 @@
     <strong>Mail:</strong><a href="BezNazwy:mail@mail.pl">mail@mail.pl  </a>
     <p>copyright © 2020 <a href="/">BezNazwy</a></p>
     </footer>
-<script src = "js/main.js" type="text/javascript"></script>
+<script type="text/javascript">AktywneProjekty();LogOut();</script>
 </body>
+    <script>
+        function NEXT()
+        {
+            let packet = {id : $("#projekty").val(), nazwa: $("#projekty option:selected").text()};
+            $.post("kr_getprojekt", packet, function(data){
+                if(data === "OK")
+                {
+                    window.location = "raportKierownika";
+                }
+            });
+        }
+    </script>
+
 </html>

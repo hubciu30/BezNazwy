@@ -12,36 +12,20 @@
 
 <body>
   <header> 
+    <div id="userLog">
+      <h4>Tu bedzie nazwa usera</h4>
+      <button class="btn btn-danger" id="btnLogOut">Wyloguj</button>
+  </div>
     <h1>BezNazwy team</h1>
     <h2>Raportowanie czasu pracy</h2>
-    <h3>"Tu bedzie nazwa projektu"</h3>
+    <h3 id = "projekt_name">...</h3>
 </header>
 
 <article>
-<table class="table">
-  <tr>
-    <th>Dzień</th>
-    <th>Godziny</th> 
-    <th>Opis</th>
-  </tr>
-  <tr>
-    <td>1</td>
-    <td>8</td>
-    <td>Inicjacja projektu</td>
-  </tr>
-  <tr>
-    <td>2</td>
-    <td>7</td>
-    <td>Przygotowanie datasetu</td>
-  </tr>
-  <tr>
-    <td>3</td>
-    <td>5</td>
-    <td>Uporządkowanie danych</td>
-  </tr>
-</table>
+<div id="userRaporty"></div>
+  
 
-<button class="btn btn-primary col-2" onclick = "window.location = 'edycjagodzin' ">Edytuj</button>
+<button class="btn btn-primary col-2" onclick = "window.location = 'raportKierownika' ">Powrót</button>
 </article>
 
 <footer>
@@ -52,4 +36,53 @@
   </footer>
 <script src = "js/main.js" type="text/javascript"></script>
 </body>
+  <script>
+    function ShowProjectThisUser()
+   {
+      $.post("kr_showWorker", function(data){
+          $("#projekt_name").text(data.nazwa);
+          $("#projekt_name").text(data[0].nazwa);
+          
+          let div = $("#userRaporty");
+          div.empty();
+          let table = document.createElement('table');
+          table.id = "prTable";
+          table.className = "table";
+          div.append(table);
+
+          let title = document.createElement('tr');
+          title.id = "prTable_title";
+          $("#prTable").append(title);
+
+          const names = ["Data", "Godziny", "Opis"];
+          // naglowek
+          for (let i = 0; i < names.length; i++) {
+              let temp = document.createElement('th');
+              temp.innerText = names[i];
+              title.append(temp);
+          }
+          // dane
+          for (let row = 0; row < data.length; row++) {
+              let tr = document.createElement('tr');
+              $("#prTable").append(tr);
+      
+              for (let col = 0; col < names.length; col++) {
+                  let td = document.createElement('td');
+                  let msg = "";
+                  if(col === 0) msg = data[row].data;
+                  else if(col === 1) msg = data[row].czas;
+                  else msg = data[row].opis;
+                  $('<p>'+ msg +'</p>').appendTo(td);
+                  tr.append(td);
+              }
+
+          }
+          $("#prTable").css("text-align", "center");
+          $("#prTable").css("margin", "10px");
+          $("#prTable").css("width", "30%");
+      });
+  }
+  ShowProjectThisUser();
+  </script>
+
 </html>

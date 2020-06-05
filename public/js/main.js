@@ -8,6 +8,31 @@ function validation()
 // sprawdza URL pod katem bezpieczenstwa
 validation();
 
+// Wypisanie Imienia i nazwiska zalogowanej osoby
+function WhoIAm()
+{
+    $.post('PracownikDane', function(data){
+        $("#userLog").children()[0].innerText = data.imie + " " + data.nazwisko;
+    });
+}
+WhoIAm(); // wywołanie
+
+// Wyloguj
+function LogOut()
+{
+    $("#btnLogOut").on("click", function(){
+        $.post('logout', function(data){
+            if(data === "OK")
+            {
+                location.reload();
+            }else{
+                alert("Error");
+            }
+        });
+        
+    });
+}
+LogOut();
 
 // pracownik - raporty
 function ProjektyPracownika()
@@ -25,6 +50,52 @@ function ProjektyPracownika()
                 $("#projektSelect").append("<option value = "+data[i].id+">"+data[i].nazwa+"</option>");
             }
         }
+    });
+}
+
+// wyswietla szczegoly na temat danego projektu dla konkretnego usera
+function ShowProjectThisUser()
+{
+    let id = $("#projektSelect").val();
+    let packet = {projektID : id};
+    $.post("pr_getraportperprojekt", packet, function(data){
+        let div = $("#userRaporty");
+        div.empty();
+        let table = document.createElement('table');
+        table.id = "prTable";
+        table.className = "table";
+        div.append(table);
+
+        let title = document.createElement('tr');
+        title.id = "prTable_title";
+        $("#prTable").append(title);
+
+        const names = ["Data", "Godziny", "Opis"];
+        // naglowek
+        for (let i = 0; i < names.length; i++) {
+            let temp = document.createElement('th');
+            temp.innerText = names[i];
+            title.append(temp);
+        }
+        // dane
+        for (let row = 0; row < data.length; row++) {
+            let tr = document.createElement('tr');
+            $("#prTable").append(tr);
+    
+            for (let col = 0; col < names.length; col++) {
+                let td = document.createElement('td');
+                let msg = "";
+                if(col === 0) msg = data[row].data;
+                else if(col === 1) msg = data[row].czas;
+                else msg = data[row].opis;
+                $('<p>'+ msg +'</p>').appendTo(td);
+                tr.append(td);
+            }
+
+        }
+        $("#prTable").css("text-align", "center");
+        $("#prTable").css("margin", "10px");
+        $("#prTable").css("width", "30%");
     });
 }
 
@@ -157,4 +228,80 @@ function AdminDelete()
         id : $("#users").val(),
     }
     $.post('admin_usun', packet, function(data) {});
+}
+
+function DezaktywujProjekt()
+{
+    let packet = {id : $("#projekty").val()};
+    $.post('admin_dezaktywujPojekt', packet, function(data){
+        if(data === "OK")
+        {
+            alert("Projekt został dezaktywowany");
+            location.reload();
+        }
+        else 
+        {
+            alert("Wystąpił nieoczekiwany błąd!");
+        }
+    });
+}
+
+function AktywneProjekty()
+{
+    $.post('admin_aktywneProjekty', function(data){
+        for(let i = 0; i < data.length; i++)
+        {
+            $("#projekty").append("<option value = "+data[i].id+">"+data[i].nazwa+"</option>");
+        }
+    });
+}
+
+function ShowMoreForProject()
+{
+    $.post("kr_thisprojekt", function(data){
+        $("#projekt_name").text(data[0].nazwa);
+        let title = document.createElement('tr');
+        title.id = "prTable_title";
+        $("#tabela").append(title);
+
+        const names = ["Pracownik", "Godziny", "Opis"];
+        // naglowek
+        for (let i = 0; i < names.length; i++) {
+            let temp = document.createElement('th');
+            temp.innerText = names[i];
+            title.append(temp);
+        }
+        // dane
+        for (let row = 0; row < data.length; row++) {
+            let tr = document.createElement('tr');
+            $("#tabela").append(tr);
+    
+            for (let col = 0; col < names.length; col++) {
+                let td = document.createElement('td');
+                let msg = "";
+                if(col === 0) 
+                {
+                    msg = data[row].imie + " " + data[row].nazwisko;
+                    $('<p>'+ msg +'</p>').appendTo(td);
+                }
+                else if(col === 1) 
+                {
+                    msg = data[row].czas;
+                    $('<p>'+ msg +'</p>').appendTo(td);
+                }
+                else
+                {
+                    $("<button/>",
+                    {
+                        id: data[row].id,
+                        class: "btn btn-primary",
+                        text: 'Opis',
+                        onclick: "TakePerson("+data[row].id+");"
+                    }).appendTo(td);
+                    
+                }
+                tr.append(td);
+            }
+        }
+    });
 }
