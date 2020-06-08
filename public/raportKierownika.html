@@ -25,7 +25,9 @@
 <table id = "tabela" class="table">
   
 </table>
+
 <button onclick = "window.location = 'ekrankierownika' " class="btn btn-primary">Powrót</button>
+<button onclick = "Dezaktywuj();" class="btn btn-primary">Zatwierdź</button>
 </article>
 
 
@@ -47,6 +49,18 @@
           window.location = "stronaRaportuWidzianaPrzezKierownika";
         }else alert("Wystąpił nieoczekiwany błąd");
       });
+  }
+  function Dezaktywuj(){
+    $.post("kr_dezaktywujPojekt", function(data)
+    {
+      if(data === "OK")
+      {
+        alert("Zatwierdzono");
+        window.location.reload();
+      }else{
+        alert("Error");
+      }
+    })
   }
 </script>
 </html>

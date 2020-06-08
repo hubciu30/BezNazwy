@@ -198,6 +198,18 @@ app.post('/kr_showWorker', function(request, response){
 	});
 });
 
+// Kierownik zatwierdza projekt
+app.post("/kr_dezaktywujPojekt", function(request, response)
+{
+	connection.query('UPDATE `projekty` SET `stan` = "0" WHERE `projekty`.`id_projektu` = ?',[request.session.TEMP_projektID], function(error, results, fields){
+		console.log(error)
+		if(error !== null)
+		{
+			response.send("Error")
+		}
+	});
+	response.send("OK");
+});
 
 // zachowuje pracownika ktory nas interesuje
 app.post('/kr_saveworker', function(request, response)
@@ -278,7 +290,7 @@ app.post("/DodajProjekt", function(request, response)
 // admin rejestruj
 app.post('/rejestruj', function(request, response)
 {
-	connection.query('INSERT INTO `users` (`id_user`, `imie`, `nazwisko`, `login`, `haslo`, `stanowisko`) VALUES (NULL, ?, ?, ?, ?, ?) ', [request.body.imie, request.body.nazwisko, request.body.login, request.body.haslo, "oczekujący"], function(error, results, fields){});
+	connection.query('INSERT INTO `users` (`id_user`, `imie`, `nazwisko`, `login`, `haslo`, `stanowisko`) VALUES (NULL, ?, ?, ?, ?, ?) ', [request.body.imie, request.body.nazwisko, request.body.login, request.body.haslo, "Pracownik"], function(error, results, fields){});
 	response.send("Success");
 });
 
@@ -333,21 +345,21 @@ app.post("/admin_zmien", function(request, response)
 	let id = request.body.id;
 	if(haslo === phaslo)
 	{
-		if(imie && imie!==request.session.imie)
+		if(imie)
 		{
 			connection.query('UPDATE `users` SET `imie` = ? WHERE `users`.`id_user` = ?', [imie, id], function(error, results, fields){});
 		}
-		if(nazwisko && nazwisko!==request.session.nazwisko)
+		if(nazwisko)
 		{
 			connection.query('UPDATE `users` SET `nazwisko` = ? WHERE `users`.`id_user` = ?', [nazwisko, id], function(error, results, fields){});
 		}
-		if(haslo !== request.session.password)
+		if(haslo)
 		{
 			connection.query('UPDATE `users` SET `haslo` = ? WHERE `users`.`id_user` = ?', [haslo, id], function(error, results, fields){});
 		}
-		if(login && login!==request.session.username)
+		if(login)
 		{
-			connection.query('UPDATE `users` SET `nazwisko` = ? WHERE `users`.`id_user` = ?', [login, id], function(error, results, fields){});
+			connection.query('UPDATE `users` SET `login` = ? WHERE `users`.`id_user` = ?', [login, id], function(error, results, fields){});
 		}
 		response.send("Success");
 		response.end();
@@ -477,6 +489,9 @@ app.post("/pr_zmien", function(request, response)
 				if(error!==null)
 				{
 					response.send('Error');
+				}else
+				{
+					request.session.imie = imie;
 				}
 			});
 		}
@@ -486,6 +501,9 @@ app.post("/pr_zmien", function(request, response)
 				if(error!==null)
 				{
 					response.send('Error');
+				}else
+				{
+					request.session.nazwisko = nazwisko;
 				}
 			});
 		}
@@ -495,6 +513,9 @@ app.post("/pr_zmien", function(request, response)
 				if(error!==null)
 				{
 					response.send('Error');
+				}else
+				{
+					request.session.haslo = haslo;
 				}
 			});
 		}

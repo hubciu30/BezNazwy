@@ -11,9 +11,11 @@ validation();
 // Wypisanie Imienia i nazwiska zalogowanej osoby
 function WhoIAm()
 {
+    
     $.post('PracownikDane', function(data){
         $("#userLog").children()[0].innerText = data.imie + " " + data.nazwisko;
     });
+    
 }
 WhoIAm(); // wywołanie
 
@@ -147,7 +149,7 @@ function Rejestracja()
                 }, function(data){
                     if(data === "Success")
                     {
-                        window.location = "logowanie";
+                        alert("Dodano!");
                     }
                     else
                     {
